@@ -5,7 +5,7 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class RegisterForm(forms.Form):
-    username = forms.CharField(max_length=255)
+    username = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'placeholder': 'enter username'}))
     email = forms.EmailField()
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
@@ -38,3 +38,8 @@ class RegisterForm(forms.Form):
             raise forms.ValidationError(
                 "password and confirm_password does not match"
             )
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=50, label='username or email')
+    password = forms.CharField(max_length=50, widget=forms.PasswordInput())
