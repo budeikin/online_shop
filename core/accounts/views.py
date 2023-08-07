@@ -3,6 +3,7 @@ from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
 
 
 # Create your views here.
@@ -42,9 +43,10 @@ def login_page(request):
                 user = authenticate(request, username=data['username'], password=data['password'])
             if user is not None:
                 login(request, user)
+                messages.success(request, 'You have successfully logged in','success')
                 return redirect('home:home-page')
             else:
-                login_form.add_error('username', 'something is wrong')
+                messages.warning(request, 'something is wrong','danger')
     else:
         login_form = LoginForm()
     return render(request, 'accounts/login_page.html', context={'form': login_form})
@@ -52,4 +54,5 @@ def login_page(request):
 
 def logout_page(request):
     logout(request)
+    messages.success(request, 'You have successfully logged out')
     return redirect('home:home-page')

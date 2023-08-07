@@ -12,4 +12,7 @@ Register
     {{form.as_p}}
     <button type="submit">register</button>
 </form>
+<hr>
+<p>Already registered?</p>
+<a href="{% url 'accounts:login' %}">Login</a>
 {% endblock %}
