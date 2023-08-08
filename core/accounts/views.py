@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from .forms import RegisterForm, LoginForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .models import Profile
+from django.views.generic import TemplateView
 
 
 # Create your views here.
@@ -43,10 +45,10 @@ def login_page(request):
                 user = authenticate(request, username=data['username'], password=data['password'])
             if user is not None:
                 login(request, user)
-                messages.success(request, 'You have successfully logged in','success')
+                messages.success(request, 'You have successfully logged in', 'success')
                 return redirect('home:home-page')
             else:
-                messages.warning(request, 'something is wrong','danger')
+                messages.warning(request, 'something is wrong', 'danger')
     else:
         login_form = LoginForm()
     return render(request, 'accounts/login_page.html', context={'form': login_form})
@@ -56,3 +58,18 @@ def logout_page(request):
     logout(request)
     messages.success(request, 'You have successfully logged out')
     return redirect('home:home-page')
+
+
+# def profile_page(request):
+#     # user = get_object_or_404(Profile,user=request.user)
+#     profile = Profile.objects.get(user_id=request.user.id)
+#     return render(request, 'accounts/profile.html', context={'profile': profile})
+
+
+class ProfileView(TemplateView):
+    template_name = 'accounts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['profile'] = Profile.objects.get(user_id=self.request.user.id)
+        return context
