@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, EditUserInformation, EditUserProfile
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
@@ -9,6 +9,14 @@ from django.views.generic import TemplateView
 
 
 # Create your views here.
+class ProfileView(TemplateView):
+    template_name = 'accounts/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context['profile'] = Profile.objects.get(user_id=self.request.user.id)
+        return context
+
 
 def register(request):
     if request.method == "POST":
@@ -66,10 +74,18 @@ def logout_page(request):
 #     return render(request, 'accounts/profile.html', context={'profile': profile})
 
 
-class ProfileView(TemplateView):
-    template_name = 'accounts/profile.html'
+def profile_update(request):
+    if request.method == 'POST':
+        user_form = EditUserInformation(request.POST, instance=request.user)
+        profile_form = EditUserInformation(request.POST, instance=request.user.profile)
+        if user_form and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, 'Information changed successfully', 'success')
+            return redirect('accounts:profile')
+    else:
+        user_form = EditUserInformation(instance=request.user)
+        profile_form = EditUserProfile(instance=request.user.profile)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context['profile'] = Profile.objects.get(user_id=self.request.user.id)
-        return context
+    return render(request, 'accounts/profile_update.html',
+                  context={'user_form': user_form, 'profile_form': profile_form})

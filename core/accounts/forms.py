@@ -45,3 +45,14 @@ class LoginForm(forms.Form):
     password = forms.CharField(max_length=50, widget=forms.PasswordInput())
 
 
+class EditUserInformation(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name']
+
+
+class EditUserProfile(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['phone_number', 'address']
+

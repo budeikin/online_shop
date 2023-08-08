@@ -5,27 +5,34 @@ Profile
 {% endblock %}
 
 {% block content %}
+<h1> profile </h1>
+<div class="container d-flex">
 
-<div class="container">
-    <h1> profile </h1>
     <hr class="w-75">
-    <table>
-        <tr>
-            <th>{{profile.user.username}}</th>
-        </tr>
-        <tr>
-            <th>{{profile.user.email}}</th>
-        </tr>
-        <tr>
-            <th>{{profile.user.first_name}} {{profile.user.last_name}}</th>
-        </tr>
-        <tr>
-            <th>{{profile.phone_number}}</th>
-        </tr>
-        <tr>
-            <th>{{profile.address}}</th>
-        </tr>
+    <div class="col-md-9">
+        <table>
+            <tr>
+                <th>{{profile.user.username}}</th>
+            </tr>
+            <tr>
+                <th>{{profile.user.email}}</th>
+            </tr>
+            <tr>
+                <th>{{profile.user.first_name}} {{profile.user.last_name}}</th>
+            </tr>
+            <tr>
+                <th>{{profile.phone_number}}</th>
+            </tr>
+            <tr>
+                <th>{{profile.address}}</th>
+            </tr>
 
-    </table>
+        </table>
+    </div>
+    <div class="col-md-3">
+        <h2>
+            <a href="{% url 'accounts:edit-profile'%}">Edit </a>
+        </h2>
+    </div>
 </div>
 {% endblock %}
