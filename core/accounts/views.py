@@ -6,16 +6,27 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .models import Profile
 from django.views.generic import TemplateView
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.decorators import login_required
+
+
+# from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 # Create your views here.
-class ProfileView(TemplateView):
-    template_name = 'accounts/profile.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context['profile'] = Profile.objects.get(user_id=self.request.user.id)
-        return context
+# class ProfileView(TemplateView):
+#     template_name = 'accounts/profile.html'
+#
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data()
+#         context['profile'] = Profile.objects.get(user_id=self.request.user.id)
+#         return context
+@login_required(login_url='accounts:login')
+def profile(reqeust):
+    profile = Profile.objects.get(user_id=reqeust.user.id)
+    return render(reqeust, 'accounts/profile.html', context={'profile': profile})
 
 
 def register(request):
@@ -73,11 +84,11 @@ def logout_page(request):
 #     profile = Profile.objects.get(user_id=request.user.id)
 #     return render(request, 'accounts/profile.html', context={'profile': profile})
 
-
+@login_required(login_url='accounts:login')
 def profile_update(request):
     if request.method == 'POST':
         user_form = EditUserInformation(request.POST, instance=request.user)
-        profile_form = EditUserInformation(request.POST, instance=request.user.profile)
+        profile_form = EditUserProfile(request.POST, instance=request.user.profile)
         if user_form and profile_form.is_valid():
             user_form.save()
             profile_form.save()
@@ -89,3 +100,25 @@ def profile_update(request):
 
     return render(request, 'accounts/profile_update.html',
                   context={'user_form': user_form, 'profile_form': profile_form})
+
+
+@login_required(login_url='accounts:login')
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, request.user)
+            messages.success(request, 'password successfully changed', 'success')
+            return redirect('accounts:profile')
+        else:
+            messages.error(request, 'information is not valid', 'danger')
+            return redirect('accounts:change-password')
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'accounts/change_password.html', context={'form': form})
+
+
+def login_with_phone_number(request):
+    return render()

@@ -17,6 +17,7 @@ class Profile(models.Model):
 
 
 # creating profile after user registration (way 1)
+
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, created, **kwargs):
     if created:
@@ -30,4 +31,4 @@ def save_profile(sender, instance, created, **kwargs):
 #         user_profile.save()
 #
 #
-# post_save.connet(save_profile, sender=User, )
+# post_save.connect(save_profile, sender=User, )

@@ -5,34 +5,38 @@ Profile
 {% endblock %}
 
 {% block content %}
-<h1> profile </h1>
+
 <div class="container d-flex">
 
     <hr class="w-75">
     <div class="col-md-9">
         <table>
             <tr>
-                <th>{{profile.user.username}}</th>
+                <h2>{{profile.user.username}}</h2>
             </tr>
             <tr>
-                <th>{{profile.user.email}}</th>
+                <h2>{{profile.user.email}}</h2>
             </tr>
             <tr>
-                <th>{{profile.user.first_name}} {{profile.user.last_name}}</th>
+                <h2>{{profile.user.first_name}} {{profile.user.last_name}}</h2>
             </tr>
             <tr>
-                <th>{{profile.phone_number}}</th>
+                <h2>{{profile.phone_number}}</h2>
             </tr>
             <tr>
-                <th>{{profile.address}}</th>
+                <h2>{{profile.address}}</h2>
             </tr>
 
         </table>
     </div>
     <div class="col-md-3">
         <h2>
-            <a href="{% url 'accounts:edit-profile'%}">Edit </a>
+            <a href="{% url 'accounts:edit-profile'%}">edit profile </a>
         </h2>
+        <h2>
+            <a href="{% url 'accounts:change-password'%}">change password </a>
+        </h2>
+
     </div>
 </div>
 {% endblock %}

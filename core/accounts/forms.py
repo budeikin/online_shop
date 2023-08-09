@@ -56,3 +56,4 @@ class EditUserProfile(forms.ModelForm):
         model = Profile
         fields = ['phone_number', 'address']
 
+
