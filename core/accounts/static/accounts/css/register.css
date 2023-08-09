@@ -1,0 +1,18 @@
+h1 {
+    padding: 50px;
+    border-radius: 10px;
+    margin: auto 20px;
+    transition: box-shadow 2s;
+}
+
+h1:hover {
+    padding: 50px;
+    border-radius: 10px;
+    margin: auto 20px;
+    box-shadow: 7px 5px #6e6e6e;
+}
+
+form .btn {
+    margin: auto;
+    align-self: center;
+}
