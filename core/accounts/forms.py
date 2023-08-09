@@ -57,3 +57,15 @@ class EditUserProfile(forms.ModelForm):
         fields = ['phone_number', 'address']
 
 
+class LoginWithPhoneForm(forms.Form):
+    phone_number = forms.IntegerField()
+
+    # def clean_phone_number(self):
+    #     phone_num = self.cleaned_data.get('phone_number')
+    #     if len(phone_num) < 11:
+    #         return ValueError('phone number must has 11 number')
+    #     return phone_num
+
+
+class VerifyCodeForm(forms.Form):
+    code = forms.IntegerField()

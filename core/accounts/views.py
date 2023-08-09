@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .forms import RegisterForm, LoginForm, EditUserInformation, EditUserProfile
+from .forms import RegisterForm, LoginForm, EditUserInformation, EditUserProfile, LoginWithPhoneForm, VerifyCodeForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.contrib.auth import authenticate, login, logout
@@ -9,6 +9,8 @@ from django.views.generic import TemplateView
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from random import randint
+import ghasedakpack
 
 
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -116,9 +118,43 @@ def change_password(request):
             return redirect('accounts:change-password')
     else:
         form = PasswordChangeForm(user=request.user)
-
     return render(request, 'accounts/change_password.html', context={'form': form})
 
 
-def login_with_phone_number(request):
-    return render()
+def login_number(request):
+    if request.method == 'POST':
+        form = LoginWithPhoneForm(request.POST)
+        if form.is_valid():
+            global random_code, number
+            number = f"{form.cleaned_data['phone_number']}"
+            random_code = randint(1000000, 9999999)
+            sms = ghasedakpack.Ghasedak("d165bb71994dff32c84e6b0fd4a7c3100171a50881ea0e0690d7bba392de3f14")
+            sms.send({
+                'message': random_code,
+                'receptor': number,
+                'linenumber': '10008566'
+            })
+            return redirect('accounts:login-phone-verify')
+
+    else:
+        form = LoginWithPhoneForm()
+    return render(request, 'accounts/login_number.html', context={'form': form})
+
+
+def login_number_verify(request):
+    if request.method == 'POST':
+        form = VerifyCodeForm(request.POST)
+        if form.is_valid():
+            if random_code == form.cleaned_data['code']:
+                profile = Profile.objects.get(phone_number=number)
+                user = User.objects.get(profile__id=profile.id)
+                login(request, user)
+                messages.success(request, 'welcome', 'success')
+                return redirect('home:home-page')
+            else:
+                messages.success(request, 'code is wrond')
+        else:
+            messages.success(request, 'form is not valid', 'danger')
+    else:
+        form = VerifyCodeForm()
+    return render(request, 'accounts/verify_code.html', context={'form': form})
