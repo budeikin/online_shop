@@ -17,7 +17,7 @@
                 {% else %}
                     <p>{{ product.unit_price }}</p>
                 {% endif %}
-                <a href="{% url 'product_module:product-detail' product.id %}">Detail</a>
+                <a href="{{ product.get_absolute_url }}">Detail</a>
                 <hr class="w-50">
             </div>
 

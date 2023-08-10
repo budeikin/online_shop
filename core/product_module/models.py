@@ -1,10 +1,12 @@
 from django.db import models
+from django.urls import reverse
 
 
 # Create your models here.
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    slug = models.SlugField(allow_unicode=True, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='category')
@@ -27,6 +29,9 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_available = models.BooleanField(default=True)
     image = models.ImageField(upload_to='products')
+
+    def get_absolute_url(self, *args, **kwargs):
+        return reverse('product_module:product-detail', kwargs={'id': self.id})
 
     def __str__(self):
         return f"{self.name}({self.category})"

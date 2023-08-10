@@ -5,6 +5,6 @@ app_name = 'product_module'
 
 urlpatterns = [
     path('', all_products, name='products'),
-    path('<int:id>', detail_product, name='product-detail'),
-    path('cat/<int:id>/', all_products, name='products-by-cat'),
+    path('<int:id>/', detail_product, name='product-detail'),
+    path('cat/<slug:slug>/', all_products, name='products-by-cat'),
 ]

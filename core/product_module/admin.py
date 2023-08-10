@@ -6,6 +6,7 @@ from .models import Category, Product, ProductGallery
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'created_at']
+    prepopulated_fields = {'slug': ('name',)}
 
 
 class ProductGalleryInline(admin.TabularInline):
