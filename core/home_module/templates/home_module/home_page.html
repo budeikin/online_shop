@@ -10,7 +10,12 @@
     <p>This is an online shop for men, women and kids</p>
     <h3>Categories</h3>
     {% for category in categories %}
-        {{ category.name }}
-        <img src="{{ category.image.url }}" alt="" class="w-25 rounded">
+        <div class="container rounded">
+            <a href="{% url 'product_module:products-by-cat' category.id %}">
+                <h3>{{ category.name }}</h3>
+                <img src="{{ category.image.url }}" alt="" class="w-25 rounded">
+                <hr class="w-50">
+            </a>
+        </div>
     {% endfor %}
 {% endblock %}

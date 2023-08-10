@@ -11,7 +11,13 @@
             <div class="d-flex flex-column justify-content-center align-items-center">
                 <h3>{{ product.name }}</h3>
                 <img src="{{ product.image.url }}" class='w-25' alt="">
-                <h4>{{ product.total_price }} $</h4>
+                {% if product.discount %}
+                    <strike>{{ product.unit_price }}</strike>
+                    <p>{{ product.total_price }}</p>
+                {% else %}
+                    <p>{{ product.unit_price }}</p>
+                {% endif %}
+                <a href="{% url 'product_module:product-detail' product.id %}">Detail</a>
                 <hr class="w-50">
             </div>
 
