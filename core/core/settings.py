@@ -31,10 +31,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # external modules
     'phone_field',
+    'ckeditor',
+    'taggit',
+    'ckeditor_uploader',
+    # internal modules
     'home_module.apps.HomeModuleConfig',
     'accounts.apps.AccountsConfig',
     'product_module.apps.ProductModuleConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -116,6 +122,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ckeditor settings
+CKEDITOR_UPLOAD_PATH = 'ck/'
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+    },
+}
+
+# django-taggit settings
+TAGGIT_CASE_INSENSITIVE = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

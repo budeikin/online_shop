@@ -1,11 +1,17 @@
 from django.contrib import admin
-from .models import Category, Product, ProductGallery
+from .models import Category, Product, ProductGallery, Variants, ProductColor, ProductSize
 
 
 # Register your models here.
 
+
+class ProductVariantAdminInline(admin.TabularInline):
+    model = Variants
+    extra = 1
+
+
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'created_at']
+    list_display = ['name', 'created_at', 'is_sub']
     prepopulated_fields = {'slug': ('name',)}
 
 
@@ -15,10 +21,14 @@ class ProductGalleryInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'created_at', 'total_price']
+    list_display = ['name', 'created_at', 'total_price', 'amount']
     list_filter = ['is_available']
-    inlines = [ProductGalleryInline, ]
+    list_editable = ['amount']
+    inlines = [ProductGalleryInline, ProductVariantAdminInline]
 
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Variants)
+admin.site.register(ProductSize)
+admin.site.register(ProductColor)

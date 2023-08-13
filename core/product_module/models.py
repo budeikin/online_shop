@@ -1,15 +1,22 @@
 from django.db import models
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
+from taggit.managers import TaggableManager
 
 
 # Create your models here.
 
 class Category(models.Model):
     name = models.CharField(max_length=50)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='sub', blank=True, null=True)
+    is_sub = models.BooleanField(default=False)
     slug = models.SlugField(allow_unicode=True, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    image = models.ImageField(upload_to='category')
+    image = models.ImageField(upload_to='category', blank=True, null=True)
+
+    def get_absolute_url(self, *args, **kwargs):
+        return reverse('product_module:products-by-cat', kwargs={'slug': self.slug})
 
     class Meta:
         verbose_name_plural = "categories"
@@ -19,22 +26,30 @@ class Category(models.Model):
 
 
 class Product(models.Model):
+    VARIANT = (
+        ('None', 'none'),
+        ('Size', 'size'),
+        ('Color', 'color'),
+    )
+
     name = models.CharField(max_length=255)
     amount = models.PositiveIntegerField()
     unit_price = models.PositiveIntegerField()
     discount = models.PositiveIntegerField(null=True, blank=True)
     total_price = models.PositiveIntegerField()
-    description = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='products')
+    description = RichTextUploadingField(null=True, blank=True)
+    category = models.ManyToManyField(Category, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_available = models.BooleanField(default=True)
+    tags = TaggableManager(blank=True)
+    status = models.CharField(max_length=255, null=True, blank=True, choices=VARIANT)
     image = models.ImageField(upload_to='products')
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('product_module:product-detail', kwargs={'id': self.id})
 
     def __str__(self):
-        return f"{self.name}({self.category})"
+        return f"{self.name}"
 
     @property
     def total_price(self):
@@ -52,3 +67,37 @@ class ProductGallery(models.Model):
 
     def __str__(self):
         return self.product
+
+
+class ProductSize(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class ProductColor(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
+class Variants(models.Model):
+    name = models.CharField(max_length=255)
+    product_variant = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variant')
+    size_variant = models.ForeignKey(ProductSize, on_delete=models.CASCADE, blank=True, null=True)
+    color_variant = models.ForeignKey(ProductColor, on_delete=models.CASCADE, null=True, blank=True)
+    amount = models.PositiveIntegerField()
+    unit_price = models.PositiveIntegerField()
+    discount = models.PositiveIntegerField(null=True, blank=True)
+    total_price = models.PositiveIntegerField()
+
+    @property
+    def total_price(self):
+        if not self.discount:
+            return self.unit_price
+        elif self.discount:
+            total = (self.discount * self.unit_price) / 100
+            return int(self.unit_price - total)
+        return self.total_price

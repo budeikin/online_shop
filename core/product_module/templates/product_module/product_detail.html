@@ -9,10 +9,45 @@
         <h2>detail of {{ product }}</h2>
         <h3>{{ product.name }}</h3>
         <img src="{{ product.image.url }}" alt="" class="w-50">
-        <h5>{{ product.description }}</h5>
+        <h5>{{ product.description|safe }}</h5>
         {% if product.discount %}
             <button class="btn btn-danger">{{ product.discount }} %</button>
         {% endif %}
         <h4>{{ product.total_price }} $</h4>
+        <hr>
+        {% if product.status == 'Size' %}
+            <form action="" method="post">
+                {% csrf_token %}
+                {% for data in variant %}
+                    <input type="radio" value="{{ data.id }}" {% if variants.id == data.id %}
+                           checked
+                    {% endif %} name="selected_variant" onchange="this.form.submit()">{{ data.size_variant.name }}  <br>
+                {% endfor %}
+            </form>
+        {% elif product.status == 'Color' %}
+            <form action="" method="post">
+                {% csrf_token %}
+                {% for data in variant %}
+                    <input type="radio" value="{{ data.id }}" {% if variants.id == data.id %}
+                           checked
+                    {% endif %} name="selected_variant" onchange="this.form.submit()">{{ data.color_variant.name }}
+                    <br>
+                {% endfor %}
+            </form>
+        {% endif %}
+        <hr>
+        {% for product in similar_products %}
+            <h3>{{ product.name }}</h3>
+            <img src="{{ product.image.url }}" class='w-25' alt="">
+            {% if product.discount %}
+                <strike>{{ product.unit_price }}</strike>
+                <p>{{ product.total_price }}</p>
+            {% else %}
+                <p>{{ product.unit_price }}</p>
+            {% endif %}
+            <a href="{{ product.get_absolute_url }}">Detail</a>
+            <hr class="w-50">
+        {% endfor %}
+
     </div>
 {% endblock %}

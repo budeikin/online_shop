@@ -1,0 +1,16 @@
+.product_image {
+    width: 200px;
+    border-radius: 20px;
+}
+
+#product_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#category_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

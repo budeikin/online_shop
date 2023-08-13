@@ -5,6 +5,29 @@
 {% endblock %}
 
 {% block content %}
+
+    {% for data in categories %}
+
+        <div class="container">
+            <div class="dropdown show">
+                <a href="{{ data.get_absolute_url }}">{{ data.name }}</a>
+                <a class="btn btn-secondary dropdown-toggle" href="#" role="button"
+                   id="dropdownMenuLink"
+                   data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+
+                </a>
+
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    {% for sub in data.sub.all %}
+                        <a class="dropdown-item" href="{{ sub.get_absolute_url }}">{{ sub.name }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+    <hr>
     <h1>all Products</h1>
     {% for product in products %}
         <div class="container">

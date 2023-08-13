@@ -11,9 +11,9 @@
     <h3>Categories</h3>
     {% for category in categories %}
         <div class="container rounded">
-            <a href="{% url 'product_module:products-by-cat' category.slug %}">
+            <a href="{{ category.get_absolute_url }}">
                 <h3>{{ category.name }}</h3>
-                <img src="{{ category.image.url }}" alt="" class="w-25 rounded">
+                <img src="{{ category.image.url }}" alt="" class="w-25 rounded rounded-circle">
                 <hr class="w-50">
             </a>
         </div>

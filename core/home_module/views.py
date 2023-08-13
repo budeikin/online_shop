@@ -6,7 +6,5 @@ from product_module.models import Category
 # Create your views here.
 
 def home_page(request):
-    categories = Category.objects.all()
+    categories = Category.objects.filter(is_sub=False)
     return render(request, 'home_module/home_page.html', context={'categories': categories})
-
-
