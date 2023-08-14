@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from .models import Product, Category, Variants
+from .models import Product, Category, Variants, Comment
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
+from .forms import CommentForm
 
 
 # Create your views here.
@@ -20,6 +21,8 @@ def all_products(request, slug=None):
 def detail_product(request, id):
     product = get_object_or_404(Product, id=id)
     similar = product.tags.similar_objects()[:2]
+    comment_form = CommentForm()
+    comments = Comment.objects.filter(product_id=id, is_reply=False)
     is_like = False
     if product.like.filter(id=request.user.id).exists():
         is_like = True
@@ -38,12 +41,13 @@ def detail_product(request, id):
             variants = Variants.objects.get(id=variant.first().id)
         context = {
             'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar,
-            'is_like': is_like, 'is_unlike': is_unlike
+            'is_like': is_like, 'is_unlike': is_unlike, 'form': comment_form, 'comments': comments
         }
         return render(request, 'product_module/product_detail.html', context)
 
     return render(request, 'product_module/product_detail.html',
-                  context={'product': product, 'similar_products': similar, 'is_like': is_like, 'is_unlike': is_unlike})
+                  context={'product': product, 'similar_products': similar, 'is_like': is_like, 'is_unlike': is_unlike
+                      , 'form': comment_form, 'comments': comments})
 
 
 def product_like(request, id):
@@ -72,3 +76,13 @@ def product_unlike(request, id):
         is_like = True
         messages.success(request, 'successfully', 'success')
     return redirect(url)
+
+
+def product_comment(request, id):
+    url = request.META.get('HTTP_REFERER')
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            Comment.objects.create(body=data['body'], rate=data['rate'], user_id=request.user.id, product_id=id)
+        return redirect(url)

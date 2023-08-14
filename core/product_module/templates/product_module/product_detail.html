@@ -62,18 +62,41 @@
             </form>
         {% endif %}
         <hr>
-        {% for product in similar_products %}
-            <h3>{{ product.name }}</h3>
-            <img src="{{ product.image.url }}" class='w-25' alt="">
-            {% if product.discount %}
-                <strike>{{ product.unit_price }}</strike>
-                <p>{{ product.total_price }}</p>
-            {% else %}
-                <p>{{ product.unit_price }}</p>
-            {% endif %}
-            <a href="{{ product.get_absolute_url }}">Detail</a>
-            <hr class="w-50">
-        {% endfor %}
+        {#        {% for product in similar_products %}#}
+        {#            <h3>{{ product.name }}</h3>#}
+        {#            <img src="{{ product.image.url }}" class='w-25' alt="">#}
+        {#            {% if product.discount %}#}
+        {#                <strike>{{ product.unit_price }}</strike>#}
+        {#                <p>{{ product.total_price }}</p>#}
+        {#            {% else %}#}
+        {#                <p>{{ product.unit_price }}</p>#}
+        {#            {% endif %}#}
+        {#            <a href="{{ product.get_absolute_url }}">Detail</a>#}
+        {#            <hr class="w-50">#}
+        {#        {% endfor %}#}
 
+        <div>
+            <h3>Leave a comment</h3>
+            <form action="{% url 'product_module:product-comment' product.id %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Comment</button>
+            </form>
+        </div>
+        <hr>
+
+        <div class="container">
+            <h3>comments</h3>
+            {% for comment in comments %}
+                <div class="shadow p-2 mt-1">
+                    <h4>{{ comment.user.username }}</h4>
+
+                    <p>{{ comment.body }}</p>
+                    <p>rate = {{ comment.rate }}</p>
+                    <hr>
+                    <small>-{{ comment.created_at }}</small>
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
