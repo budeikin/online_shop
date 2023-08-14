@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -44,12 +45,22 @@ class Product(models.Model):
     tags = TaggableManager(blank=True)
     status = models.CharField(max_length=255, null=True, blank=True, choices=VARIANT)
     image = models.ImageField(upload_to='products')
+    like = models.ManyToManyField(User, blank=True, related_name='product_like')
+    unlike = models.ManyToManyField(User, blank=True, related_name='product_unlike')
+    total_like = models.PositiveIntegerField(default=0)
+    total_unlike = models.PositiveIntegerField(default=0)
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('product_module:product-detail', kwargs={'id': self.id})
 
     def __str__(self):
         return f"{self.name}"
+
+    def total_like(self):
+        return self.like.count()
+
+    def total_unlike(self):
+        return self.unlike.count()
 
     @property
     def total_price(self):

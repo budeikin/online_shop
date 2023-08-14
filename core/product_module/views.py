@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Product, Category, Variants
 from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
 
 # Create your views here.
@@ -19,6 +20,14 @@ def all_products(request, slug=None):
 def detail_product(request, id):
     product = get_object_or_404(Product, id=id)
     similar = product.tags.similar_objects()[:2]
+    is_like = False
+    if product.like.filter(id=request.user.id).exists():
+        is_like = True
+
+    is_unlike = False
+    if product.unlike.filter(id=request.user.id).exists():
+        is_unlike = True
+
     if product.status != 'None':
         if request.method == 'POST':
             variant = Variants.objects.filter(product_variant_id=id)
@@ -28,9 +37,38 @@ def detail_product(request, id):
             variant = Variants.objects.filter(product_variant_id=id)
             variants = Variants.objects.get(id=variant.first().id)
         context = {
-            'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar
+            'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar,
+            'is_like': is_like, 'is_unlike': is_unlike
         }
         return render(request, 'product_module/product_detail.html', context)
 
     return render(request, 'product_module/product_detail.html',
-                  context={'product': product, 'similar_products': similar})
+                  context={'product': product, 'similar_products': similar, 'is_like': is_like, 'is_unlike': is_unlike})
+
+
+def product_like(request, id):
+    url = request.META.get('HTTP_REFERER')
+    product = get_object_or_404(Product, id=id)
+    is_like = False
+    if product.like.filter(id=request.user.id).exists():
+        product.like.remove(request.user)
+        is_like = False
+    else:
+        product.like.add(request.user)
+        is_like = True
+        messages.success(request, 'thanks for like', 'success')
+    return redirect(url)
+
+
+def product_unlike(request, id):
+    url = request.META.get('HTTP_REFERER')
+    product = get_object_or_404(Product, id=id)
+    is_like = False
+    if product.unlike.filter(id=request.user.id).exists():
+        product.unlike.remove(request.user)
+        is_like = False
+    else:
+        product.unlike.add(request.user)
+        is_like = True
+        messages.success(request, 'successfully', 'success')
+    return redirect(url)
