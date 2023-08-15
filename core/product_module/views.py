@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Product, Category, Variants, Comment
+from .models import Product, Category, Variants, Comment, ProductGallery
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from .forms import CommentForm, ReplyCommentForm
@@ -21,6 +21,7 @@ def all_products(request, slug=None):
 
 def detail_product(request, id):
     product = get_object_or_404(Product, id=id)
+    images = ProductGallery.objects.filter(product_id=id)
     similar = product.tags.similar_objects()[:2]
     comment_form = CommentForm()
     reply_form = ReplyCommentForm()
@@ -43,14 +44,14 @@ def detail_product(request, id):
             variants = Variants.objects.get(id=variant.first().id)
         context = {
             'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar,
-            'is_like': is_like, 'is_unlike': is_unlike, 'form': comment_form, 'comments': comments,
+            'is_like': is_like, 'is_unlike': is_unlike, 'form': comment_form, 'comments': comments, 'images': images,
             'reply_form': reply_form
         }
         return render(request, 'product_module/product_detail.html', context)
 
     return render(request, 'product_module/product_detail.html',
                   context={'product': product, 'similar_products': similar, 'is_like': is_like, 'is_unlike': is_unlike
-                      , 'form': comment_form, 'comments': comments, 'reply_form': reply_form})
+                      , 'form': comment_form, 'comments': comments, 'reply_form': reply_form, 'images': images})
 
 
 def product_like(request, id):

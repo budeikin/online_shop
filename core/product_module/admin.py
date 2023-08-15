@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Category, Product, ProductGallery, Variants, ProductColor, ProductSize, Comment
+import admin_thumbnails
 
 
 # Register your models here.
@@ -15,6 +16,7 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+@admin_thumbnails.thumbnail('image')
 class ProductGalleryInline(admin.TabularInline):
     model = ProductGallery
     extra = 2
@@ -33,3 +35,4 @@ admin.site.register(Variants)
 admin.site.register(ProductSize)
 admin.site.register(ProductColor)
 admin.site.register(Comment)
+admin.site.register(ProductGallery)

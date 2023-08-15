@@ -54,7 +54,7 @@ class Product(models.Model):
         return reverse('product_module:product-detail', kwargs={'id': self.id})
 
     def __str__(self):
-        return f"{self.name}"
+        return self.name
 
     def total_like(self):
         return self.like.count()
@@ -77,7 +77,7 @@ class ProductGallery(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.product
+        return self.product.name
 
 
 class ProductSize(models.Model):
