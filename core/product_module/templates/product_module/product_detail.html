@@ -88,13 +88,42 @@
         <div class="container">
             <h3>comments</h3>
             {% for comment in comments %}
-                <div class="shadow p-2 mt-1">
-                    <h4>{{ comment.user.username }}</h4>
+                <div class="shadow p-4 mt-1 bg-dark rounded">
+                    <h4 class="text-white">{{ comment.user.username }}</h4>
 
-                    <p>{{ comment.body }}</p>
-                    <p>rate = {{ comment.rate }}</p>
+                    <p class="text-white">{{ comment.body }}</p>
+                    <p class="text-white">rate = {{ comment.rate }}</p>
                     <hr>
-                    <small>-{{ comment.created_at }}</small>
+                    <small class="text-white-50">{{ comment.created_at }}</small>
+                    <hr class="text-white">
+
+                    <div class="raw">
+                        <div class="p-2 m-2">
+                            <a href="{% url 'product_module:comment-like' comment.id %}"
+                               class="text-white bg-danger p-3 rounded">Like</a>
+                            <small class="text-white">&nbsp {{ comment.total_like }}</small>
+                        </div>
+                        <hr>
+                    </div>
+                    <form action="{% url 'product_module:comment-reply' product_id=product.id comment_id=comment.id %}"
+                          method="post">
+                        {% csrf_token %}
+                        {{ reply_form.as_p }}
+                        <div class="mt-2">
+                            <button type="submit" class="btn btn-primary">reply</button>
+                        </div>
+                    </form>
+
+
+                    {% for data in comment.comment_reply.all %}
+                        <hr>
+
+                        <div class="bg-danger p-2 rounded">
+                            <h4 class="text_white">{{ data.user.username }}</h4>
+                            <p class="text-white">{{ data.body }}</p>
+                        </div>
+                    {% endfor %}
+
                 </div>
             {% endfor %}
         </div>

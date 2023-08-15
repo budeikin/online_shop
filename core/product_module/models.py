@@ -122,6 +122,12 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     reply = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='comment_reply')
     is_reply = models.BooleanField(default=False)
+    comment_like = models.ManyToManyField(User, blank=True, null=True, related_name='com_like')
+    total_like = models.PositiveIntegerField(default=0)
+
+    @property
+    def total_like(self):
+        return self.comment_like.count()
 
     def __str__(self):
         return f"{self.user.username}({self.product})"
