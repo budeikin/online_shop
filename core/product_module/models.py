@@ -3,6 +3,7 @@ from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 
 # Create your models here.
@@ -49,6 +50,13 @@ class Product(models.Model):
     unlike = models.ManyToManyField(User, blank=True, related_name='product_unlike')
     total_like = models.PositiveIntegerField(default=0)
     total_unlike = models.PositiveIntegerField(default=0)
+
+    def average(self):
+        data = Comment.objects.filter(product=self, is_reply=False).aggregate(avg=Avg('rate'))
+        star = 0
+        if data['avg'] is not None:
+            star = round(data['avg'], 1)
+        return star
 
     def get_absolute_url(self, *args, **kwargs):
         return reverse('product_module:product-detail', kwargs={'id': self.id})

@@ -8,6 +8,11 @@
 
     <h1>this is home page</h1>
     <p>This is an online shop for men, women and kids</p>
+    <form action="{% url 'home:search-page' %}" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">Search</button>
+    </form>
     <h3>Categories</h3>
     {% for category in categories %}
         <div class="container rounded">

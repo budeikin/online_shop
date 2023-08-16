@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import home_page
+from .views import home_page,search_page
 
 app_name = 'home'
 
 urlpatterns = [
     path('', home_page, name='home-page'),
+    path('search/', search_page, name='search-page'),
 
 ]
