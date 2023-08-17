@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'home_module.apps.HomeModuleConfig',
     'accounts.apps.AccountsConfig',
     'product_module.apps.ProductModuleConfig',
+    'cart.apps.CartConfig'
 
 ]
 

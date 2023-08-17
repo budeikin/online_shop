@@ -70,6 +70,18 @@
             </form>
         {% endif %}
         <hr>
+        <div class="card bg-danger">
+            <h4>your choice price {{ variants.total_price }} </h4>
+        </div>
+        <hr>
+        <div>
+            <form action="">
+                {% csrf_token %}
+                {{ cart_form }}
+                <button type="submit" class="btn btn-danger">add to basket</button>
+            </form>
+        </div>
+        <hr>
         {#        {% for product in similar_products %}#}
         {#            <h3>{{ product.name }}</h3>#}
         {#            <img src="{{ product.image.url }}" class='w-25' alt="">#}

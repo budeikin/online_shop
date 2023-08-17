@@ -4,6 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from .forms import CommentForm, ReplyCommentForm
 from django.contrib.auth.decorators import login_required
+from cart.models import Cart
+from cart.forms import CartForm
 
 
 # Create your views here.
@@ -25,6 +27,7 @@ def detail_product(request, id):
     similar = product.tags.similar_objects()[:2]
     comment_form = CommentForm()
     reply_form = ReplyCommentForm()
+    cart_form = CartForm()
     comments = Comment.objects.filter(product_id=id, is_reply=False)
     is_like = False
     if product.like.filter(id=request.user.id).exists():
@@ -45,13 +48,14 @@ def detail_product(request, id):
         context = {
             'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar,
             'is_like': is_like, 'is_unlike': is_unlike, 'form': comment_form, 'comments': comments, 'images': images,
-            'reply_form': reply_form
+            'reply_form': reply_form, 'cart_form': cart_form
         }
         return render(request, 'product_module/product_detail.html', context)
 
     return render(request, 'product_module/product_detail.html',
                   context={'product': product, 'similar_products': similar, 'is_like': is_like, 'is_unlike': is_unlike
-                      , 'form': comment_form, 'comments': comments, 'reply_form': reply_form, 'images': images})
+                      , 'form': comment_form, 'comments': comments, 'reply_form': reply_form, 'images': images,
+                           'cart_form': cart_form})
 
 
 def product_like(request, id):
