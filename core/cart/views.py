@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect
 from product_module.models import Product, Variants
 from .models import Cart
 from .forms import CartForm
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
-
+@login_required(login_url='accounts:login')
 def cart_detail(request):
     items = Cart.objects.filter(user_id=request.user.id)
     total = 0
@@ -17,6 +18,7 @@ def cart_detail(request):
     return render(request, 'cart/cart.html', context={'items': items, 'total': total})
 
 
+@login_required(login_url='accounts:login')
 def add_to_cart(request, id):
     url = request.META.get('HTTP_REFERER')
     product = Product.objects.get(id=id)
@@ -54,6 +56,7 @@ def add_to_cart(request, id):
     return redirect(url)
 
 
+@login_required(login_url='accounts:login')
 def delete_from_cart(request, id):
     url = request.META.get('HTTP_REFERER')
     product = Cart.objects.filter(product_id=id)
