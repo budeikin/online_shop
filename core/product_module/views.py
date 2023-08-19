@@ -44,7 +44,7 @@ def detail_product(request, id):
             variants = Variants.objects.get(id=var_id)
         else:
             variant = Variants.objects.filter(product_variant_id=id)
-            variants = Variants.objects.get(id=variant.first().id)
+            variants = Variants.objects.get(id=variant[0].id)
         context = {
             'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar,
             'is_like': is_like, 'is_unlike': is_unlike, 'form': comment_form, 'comments': comments, 'images': images,
