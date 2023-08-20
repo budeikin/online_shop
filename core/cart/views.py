@@ -3,19 +3,23 @@ from product_module.models import Product, Variants
 from .models import Cart
 from .forms import CartForm
 from django.contrib.auth.decorators import login_required
+from order.forms import OrderForm
 
 
 # Create your views here.
 @login_required(login_url='accounts:login')
 def cart_detail(request):
     items = Cart.objects.filter(user_id=request.user.id)
+    user = request.user
+    order_form = OrderForm()
     total = 0
     for item in items:
         if item.product.status != 'None':
             total += item.variant.total_price * item.quantity
         else:
             total += item.product.total_price * item.quantity
-    return render(request, 'cart/cart.html', context={'items': items, 'total': total})
+    return render(request, 'cart/cart.html',
+                  context={'items': items, 'total': total, 'order_form': order_form, 'user': user})
 
 
 @login_required(login_url='accounts:login')

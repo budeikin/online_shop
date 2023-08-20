@@ -15,11 +15,11 @@ class Order(models.Model):
     address = models.CharField(max_length=50)
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     variant = models.ForeignKey(Variants, on_delete=models.CASCADE, null=True, blank=True)
@@ -27,3 +27,9 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    def size(self):
+        return self.variant.size_variant.name
+
+    def color(self):
+        return self.variant.color_variant.name

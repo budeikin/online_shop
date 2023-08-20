@@ -112,6 +112,9 @@ class Variants(models.Model):
     discount = models.PositiveIntegerField(null=True, blank=True)
     total_price = models.PositiveIntegerField()
 
+    def __str__(self):
+        return self.product_variant.name
+
     @property
     def total_price(self):
         if not self.discount:
