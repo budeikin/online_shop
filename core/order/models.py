@@ -8,11 +8,19 @@ from product_module.models import Product, Variants
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     created_at = models.DateTimeField(auto_now_add=True)
+    discount = models.PositiveIntegerField(null=True, blank=True)
     is_paid = models.BooleanField(default=False)
     email = models.EmailField()
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     address = models.CharField(max_length=50)
+
+    def get_price(self):
+        total = sum(i.price() for i in self.items.all())
+        if self.discount:
+            price = (self.discount / 100) * total
+            return int(total - price)
+        return total
 
     def __str__(self):
         return self.user.username
@@ -33,3 +41,20 @@ class OrderItem(models.Model):
 
     def color(self):
         return self.variant.color_variant.name
+
+    def price(self):
+        if self.product.status != "None":
+            return self.variant.total_price * self.quantity
+        else:
+            return self.product.total_price * self.quantity
+
+
+class Coupon(models.Model):
+    name = models.CharField(max_length=48, unique=True)
+    is_active = models.BooleanField(default=False)
+    discount = models.PositiveIntegerField()
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+
+    def __str__(self):
+        return self.name

@@ -1,31 +1,32 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Profile
+    Profile
 {% endblock %}
 
 {% block content %}
 
-<div class="container d-flex flex-column justify-content-center align-items-center p-4">
-    <div class="card" style="width:400px">
-        <img class="card-img-top"
-             src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png"
-             alt="Card image">
-        <div class="card-body">
-            <h4 class="card-title">{{profile.user.username}}</h4>
-            <p class="card-text">{{profile.user.email}}</p>
-            <p class="card-text">{{profile.user.first_name}}</p>
-            <p class="card-text">{{profile.user.last_name}}</p>
-            <p class="card-text">{{profile.phone_number}}</p>
-            <p class="card-text">{{profile.address}}</p>
-            <h2>
-                <a class='btn btn-primary' href="{% url 'accounts:edit-profile'%}">edit profile </a>
-            </h2>
-            <h2>
-                <a class="btn btn-primary" href="{% url 'accounts:change-password'%}">change password </a>
-            </h2>
-        </div>
-    </div>
+    <div class="container d-flex flex-column justify-content-center align-items-center p-4">
+        <div class="card" style="width:400px">
+            <img class="card-img-top"
+                 src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png"
+                 alt="Card image">
+            <div class="card-body">
+                <h4 class="card-title">{{ profile.user.username }}</h4>
+                <p class="card-text">{{ profile.user.email }}</p>
+                <p class="card-text">{{ profile.user.first_name }}</p>
+                <p class="card-text">{{ profile.user.last_name }}</p>
+                <p class="card-text">{{ profile.phone_number }}</p>
+                <p class="card-text">{{ profile.address }}</p>
+                <h2>
+                    <a class='btn btn-primary' href="{% url 'accounts:edit-profile' %}">edit profile </a>
+                </h2>
+                <h2>
+                    <a class="btn btn-primary" href="{% url 'accounts:change-password' %}">change password </a>
+                </h2>
+            </div>
 
-</div>
+        </div>
+
+    </div>
 {% endblock %}

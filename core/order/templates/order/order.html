@@ -5,6 +5,16 @@
 {% endblock %}
 
 {% block content %}
-    <h2>order detail</h2>
-    {{ order.user.username }}
+    <div class="container">
+        <h2>order detail</h2>
+        <h2>{{ order.user.get_full_name }}</h2>
+        <h3>total price is {{ order.get_price }}$</h3>
+        <div>
+            <form action="{% url 'order:order-coupon' order.id %}" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class=" btn btn-danger">Continue</button>
+            </form>
+        </div>
+    </div>
 {% endblock %}

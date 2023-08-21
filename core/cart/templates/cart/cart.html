@@ -76,17 +76,18 @@
                     {% csrf_token %}
                     <div class="card p-3 m-auto bg-light">
                         <lable>email:
-                            <input type="text" value="{{ user.email }}" required>
+                            <input type="text" name="email" value="{{ user.email }}" required>
                         </lable>
                         <lable>first name:
-                            <input type="text" value="{{ user.first_name }}">
+                            <input type="text" name="first_name" value="{{ user.first_name }}">
                         </lable>
                         <lable>last name:
-                            <input type="text" value="{{ user.last_name }}">
+                            <input type="text" name="last_name" value="{{ user.last_name }}">
                         </lable>
                         <lable>address:
-                            <input type="text" value="{{ user.profile.address }}">
+                            <input type="text" name="address" value="{{ user.profile.address }}">
                         </lable>
+
                     </div>
                     <button type="submit" class="btn btn-danger">Order</button>
                 </form>

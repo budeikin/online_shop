@@ -1,14 +1,17 @@
-from django.shortcuts import render, redirect
-from .models import Order, OrderItem
-from .forms import OrderForm
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Order, OrderItem, Coupon
+from .forms import OrderForm, CouponForm
 from cart.models import Cart
+from django.views.decorators.http import require_POST
+from django.utils import timezone
+from django.contrib import messages
 
 
 # Create your views here.
 def order_detail(request, order_id):
-    order = Order.objects.get(id=order_id)
-
-    return render(request, 'order/order.html', context={'order': order})
+    order = get_object_or_404(Order, id=order_id, user_id=request.user.id)
+    form = CouponForm()
+    return render(request, 'order/order.html', context={'order': order, 'form': form})
 
 
 def order_create(request):
@@ -16,7 +19,8 @@ def order_create(request):
         order_form = OrderForm(request.POST)
         if order_form.is_valid():
             data = order_form.cleaned_data
-            order = Order.objects.create(user_id=request.user.id, email=data['email'], first_name=data['first_name'],
+            order = Order.objects.create(user_id=request.user.id, email=data['email'],
+                                         first_name=data['first_name'],
                                          last_name=data['last_name'])
             cart = Cart.objects.filter(user_id=request.user.id)
             for item in cart:
@@ -25,3 +29,22 @@ def order_create(request):
                                          quantity=item.quantity)
             Cart.objects.filter(user_id=request.user.id).delete()
             return redirect('order:order-detail', order.id)
+
+
+@require_POST
+def order_coupon(request, order_id):
+    url = request.META.get('HTTP_REFERER')
+    form = CouponForm(request.POST)
+    time = timezone.now()
+    if form.is_valid():
+        code = form.cleaned_data['code']
+        try:
+            coupon = Coupon.objects.get(name__exact=code, start__lte=time, end__gte=time, is_active=True)
+        except Coupon.DoesNotExist:
+            messages.error(request, 'this code does not exist', 'danger')
+            return redirect('order:order-detail', order_id)
+
+        order = Order.objects.get(id=order_id)
+        order.discount = coupon.discount
+        order.save()
+        return redirect(url)
