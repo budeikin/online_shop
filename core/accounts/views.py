@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from .forms import RegisterForm, LoginForm, EditUserInformation, EditUserProfile, LoginWithPhoneForm, VerifyCodeForm
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
@@ -11,6 +11,13 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from random import randint
 import ghasedakpack
+from django.core.mail import EmailMessage, send_mail
+from django.views import View
+from django.utils.encoding import force_text, force_bytes
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.sites.shortcuts import get_current_site
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from six import text_type
 
 
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,17 +25,28 @@ import ghasedakpack
 
 # Create your views here.
 
-# class ProfileView(TemplateView):
-#     template_name = 'accounts/profile.html'
-#
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data()
-#         context['profile'] = Profile.objects.get(user_id=self.request.user.id)
-#         return context
+class EmailToken(PasswordResetTokenGenerator):
+    def _make_hash_value(self, user, timestamp):
+        return (text_type(user.is_active) + text_type(user.id) + text_type(timestamp))
+
+
+email_generator = EmailToken()
+
+
 @login_required(login_url='accounts:login')
 def profile(reqeust):
     profile = Profile.objects.get(user_id=reqeust.user.id)
     return render(reqeust, 'accounts/profile.html', context={'profile': profile})
+
+
+class ActivateAccountView(View):
+    def get(self, request, uidb64, token):
+        id = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(id=id)
+        if user and email_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return redirect('accounts:login')
 
 
 def register(request):
@@ -43,10 +61,15 @@ def register(request):
 
             user = User.objects.create_user(email=email, username=username, first_name=first_name, last_name=last_name,
                                             )
-
+            user.is_active = False
             user.set_password(password)
             user.save()
-
+            domain = get_current_site(request).domain
+            uidb64 = urlsafe_base64_encode(force_bytes(user.id))
+            url = reverse('accounts:activate', kwargs={'uidb64': uidb64, 'token': email_generator.make_token(user)})
+            link = 'http://' + domain + url
+            send_mail('actiation account', link, 'budeikin52@gmail.com', [email])
+            messages.success(request, 'email sent successfully')
             return redirect('home:home-page')
     else:
         register_form = RegisterForm()
