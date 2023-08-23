@@ -18,6 +18,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from six import text_type
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
 
 
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -181,3 +183,22 @@ def login_number_verify(request):
     else:
         form = VerifyCodeForm()
     return render(request, 'accounts/verify_code.html', context={'form': form})
+
+
+class CustomResetPasswordView(auth_views.PasswordResetView):
+    template_name = 'accounts/reset_password.html'
+    success_url = reverse_lazy('accounts:done-reset-password')
+    email_template_name = 'accounts/link.html'
+
+
+class DoneResetPassword(auth_views.PasswordResetDoneView):
+    template_name = 'accounts/done_reset_password.html'
+
+
+class ConfirmResetPassword(auth_views.PasswordResetConfirmView):
+    template_name = 'accounts/confirm_reset_password.html'
+    success_url = reverse_lazy('accounts:done-confirm-reset-password')
+
+
+class DoneConfirmResetPassword(auth_views.PasswordResetCompleteView):
+    template_name = 'accounts/reset_password_complete.html'

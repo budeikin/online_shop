@@ -69,3 +69,5 @@ class LoginWithPhoneForm(forms.Form):
 
 class VerifyCodeForm(forms.Form):
     code = forms.IntegerField()
+
+

@@ -1,18 +1,18 @@
-{%extends 'base.html'%}
+{% extends 'base.html' %}
 
 {% block title %}
-Login
+    Login
 {% endblock %}
 
 {% block content %}
-<div class="container d-flex flex-column justify-content-center align-items-center">
-    <h1>this is Login page</h1>
+    <div class="container d-flex flex-column justify-content-center align-items-center">
+        <h1>this is Login page</h1>
 
-    <form method="post" class="shadow p-4 mt-4">
-        {%csrf_token%}
-        {{ form.as_p }}
-        <button class="btn btn-success" type="submit">login</button>
-    </form>
-
-</div>
+        <form method="post" class="shadow p-4 mt-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-success" type="submit">login</button>
+        </form>
+        <a href="{% url 'accounts:reset-password' %}" class="p-4">forgot password?</a>
+    </div>
 {% endblock %}
