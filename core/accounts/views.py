@@ -115,7 +115,7 @@ def logout_page(request):
 def profile_update(request):
     if request.method == 'POST':
         user_form = EditUserInformation(request.POST, instance=request.user)
-        profile_form = EditUserProfile(request.POST, instance=request.user.profile)
+        profile_form = EditUserProfile(request.POST, request.FILES, instance=request.user.profile)
         if user_form and profile_form.is_valid():
             user_form.save()
             profile_form.save()

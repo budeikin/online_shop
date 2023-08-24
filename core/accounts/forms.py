@@ -54,7 +54,7 @@ class EditUserInformation(forms.ModelForm):
 class EditUserProfile(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['phone_number', 'address']
+        fields = ['phone_number', 'address', 'avatar']
 
 
 class LoginWithPhoneForm(forms.Form):
@@ -69,5 +69,3 @@ class LoginWithPhoneForm(forms.Form):
 
 class VerifyCodeForm(forms.Form):
     code = forms.IntegerField()
-
-

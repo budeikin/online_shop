@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'ckeditor',
     'taggit',
     'ckeditor_uploader',
+    'sorl.thumbnail',
     # internal modules
     'home_module.apps.HomeModuleConfig',
     'accounts.apps.AccountsConfig',
@@ -148,3 +149,6 @@ EMAIL_HOST_USER = 'budeikin52@gmail.com'
 EMAIL_HOST_PASSWORD = 'ywwydwybdmhrldzr'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# sorl thumbnail
+THUMBNAIL_DEBUG = True
