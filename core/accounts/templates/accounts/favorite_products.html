@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+    favorite products
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% for product in favorite %}
+            <div class="d-flex flex-column justify-content-center align-items-center">
+                <h3>{{ product.name }}</h3>
+                {% thumbnail product.image "100x100" crop="center" as im %}
+                    <img src="{{ im.url }}">
+                {% endthumbnail %}
+                {% if product.discount %}
+                    <strike>{{ product.unit_price }}</strike>
+                    <p>{{ product.total_price }}</p>
+                {% else %}
+                    <p>{{ product.unit_price }}</p>
+                {% endif %}
+                <a href="{{ product.get_absolute_url }}">Detail</a>
+
+
+                <a href="{% url 'product_module:favorite-product' product.id %}"><i class="fa fa-bookmark"
+                                                                                    title="remove from favorite"></i></a>
+
+                <hr>
+            </div>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

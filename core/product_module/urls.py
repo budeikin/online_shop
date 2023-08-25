@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import all_products, detail_product, product_like, product_unlike, product_comment, comment_reply, \
-    comment_like
+    comment_like,favorite_product
 
 app_name = 'product_module'
 
@@ -13,4 +13,5 @@ urlpatterns = [
     path('comment/<int:id>/', product_comment, name='product-comment'),
     path('reply/<int:product_id>/<int:comment_id>/', comment_reply, name='comment-reply'),
     path('comment_like/<int:comment_id>/', comment_like, name='comment-like'),
+    path('favorite/<int:id>/', favorite_product, name='favorite-product'),
 ]

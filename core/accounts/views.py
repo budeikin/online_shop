@@ -20,6 +20,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from six import text_type
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
+from order.models import OrderItem
 
 
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -202,3 +203,13 @@ class ConfirmResetPassword(auth_views.PasswordResetConfirmView):
 
 class DoneConfirmResetPassword(auth_views.PasswordResetCompleteView):
     template_name = 'accounts/reset_password_complete.html'
+
+
+def favorite_products(request):
+    favorite = request.user.favorite_products.all()
+    return render(request, 'accounts/favorite_products.html', context={'favorite': favorite})
+
+
+def history(request):
+    data = OrderItem.objects.filter(user_id=request.user.id)
+    return render(request, 'accounts/history.html', context={'orders': data})

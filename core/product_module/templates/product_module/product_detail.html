@@ -17,6 +17,14 @@
             {% endfor %}
         </div>
 
+        {% if is_favorite %}
+            <a href="{% url 'product_module:favorite-product' product.id %}"><i class="fa fa-bookmark"
+                                                                                title="add to favorite"></i></a>
+        {% else %}
+            <a href="{% url 'product_module:favorite-product' product.id %}"><i class="fa fa-bookmark-o"
+                                                                                title="remove from favorite"></i></a>
+        {% endif %}
+
         <h5>{{ product.description|safe }}</h5>
 
         {% if product.discount %}

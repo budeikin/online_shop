@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    history
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% for order in orders %}
+            <p>{{ order.product.name }}</p>
+            <img src="{{ order.product.image.url }}" alt="" style="width: 100px">
+            <p>{{ order.order.get_price }}</p>
+            {% if order.is_paid %}
+                <p>پرداخت شده</p>
+            {% else %}
+                <p>پرداخت نشده است</p>
+            {% endif %}
+        {% endfor %}
+
+    </div>
+{% endblock %}

@@ -30,8 +30,13 @@ def detail_product(request, id):
     cart_form = CartForm()
     comments = Comment.objects.filter(product_id=id, is_reply=False)
     is_like = False
+    is_favorite = False
+
     if product.like.filter(id=request.user.id).exists():
         is_like = True
+
+    if product.favorite.filter(id=request.user.id).exists():
+        is_favorite = True
 
     is_unlike = False
     if product.unlike.filter(id=request.user.id).exists():
@@ -48,14 +53,14 @@ def detail_product(request, id):
         context = {
             'product': product, 'variant': variant, 'variants': variants, 'similar_products': similar,
             'is_like': is_like, 'is_unlike': is_unlike, 'form': comment_form, 'comments': comments, 'images': images,
-            'reply_form': reply_form, 'cart_form': cart_form
+            'reply_form': reply_form, 'cart_form': cart_form, 'is_favorite': is_favorite
         }
         return render(request, 'product_module/product_detail.html', context)
 
     return render(request, 'product_module/product_detail.html',
                   context={'product': product, 'similar_products': similar, 'is_like': is_like, 'is_unlike': is_unlike
                       , 'form': comment_form, 'comments': comments, 'reply_form': reply_form, 'images': images,
-                           'cart_form': cart_form})
+                           'cart_form': cart_form, 'is_favorite': is_favorite})
 
 
 def product_like(request, id):
@@ -122,4 +127,18 @@ def comment_like(request, comment_id):
     else:
         comment.comment_like.add(request.user)
 
+    return redirect(url)
+
+
+def favorite_product(request, id):
+    url = request.META.get('HTTP_REFERER')
+    product = Product.objects.get(id=id)
+    is_favorite = False
+    if product.favorite.filter(id=request.user.id).exists():
+        product.favorite.remove(request.user)
+        is_favorite = False
+    else:
+        product.favorite.add(request.user)
+        is_favorite = True
+        product.save()
     return redirect(url)
