@@ -6,19 +6,26 @@ from .forms import CommentForm, ReplyCommentForm
 from django.contrib.auth.decorators import login_required
 from cart.models import Cart
 from cart.forms import CartForm
+from django.core.paginator import Paginator
 
 
 # Create your views here.
 
 def all_products(request, slug=None):
     products = Product.objects.all()
+    paginator = Paginator(products, 2)
+    page_num = request.GET.get('page')
+    page_object = paginator.get_page(page_num)
     categories = Category.objects.filter(is_sub=False)
     if slug:
         category = get_object_or_404(Category, slug=slug)
-        products = Product.objects.filter(category=category)
+        page_object = Product.objects.filter(category=category)
+        paginator = Paginator(page_object, 2)
+        page_num = request.GET.get('page')
+        page_object = paginator.get_page(page_num)
 
     return render(request, 'product_module/products.html',
-                  context={'products': products, 'categories': categories})
+                  context={'products': page_object, 'categories': categories, 'page_num': page_num})
 
 
 def detail_product(request, id):
