@@ -7,12 +7,21 @@ from django.contrib.auth.decorators import login_required
 from cart.models import Cart
 from cart.forms import CartForm
 from django.core.paginator import Paginator
+from .filters import ProductFileter
+from django.db.models import Min, Max
 
 
 # Create your views here.
 
 def all_products(request, slug=None):
     products = Product.objects.all()
+    f = ProductFileter(request.GET, queryset=products)
+    products = f.qs
+    min_price = Product.objects.aggregate(unit_price=Min('unit_price'))
+    min = int(min_price['unit_price'])
+    max_price = Product.objects.aggregate(unit_price=Max('unit_price'))
+    max = int(max_price['unit_price'])
+
     paginator = Paginator(products, 2)
     page_num = request.GET.get('page')
     page_object = paginator.get_page(page_num)
@@ -25,7 +34,8 @@ def all_products(request, slug=None):
         page_object = paginator.get_page(page_num)
 
     return render(request, 'product_module/products.html',
-                  context={'products': page_object, 'categories': categories, 'page_num': page_num})
+                  context={'products': page_object, 'categories': categories, 'page_num': page_num, 'filter': f,
+                           'min': min, 'max': max})
 
 
 def detail_product(request, id):

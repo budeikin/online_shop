@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'taggit',
     'ckeditor_uploader',
     'sorl.thumbnail',
+    'django_filters',
     # internal modules
     'home_module.apps.HomeModuleConfig',
     'accounts.apps.AccountsConfig',

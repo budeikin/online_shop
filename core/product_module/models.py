@@ -27,6 +27,13 @@ class Category(models.Model):
         return self.name
 
 
+class Brand(models.Model):
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     VARIANT = (
         ('None', 'none'),
@@ -50,6 +57,9 @@ class Product(models.Model):
     unlike = models.ManyToManyField(User, blank=True, related_name='product_unlike')
     total_like = models.PositiveIntegerField(default=0)
     total_unlike = models.PositiveIntegerField(default=0)
+    color = models.ManyToManyField('ProductColor', blank=True)
+    size = models.ManyToManyField('ProductSize', blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, blank=True, null=True)
     favorite = models.ManyToManyField(User, blank=True, null=True, related_name='favorite_products')
 
     def average(self):
