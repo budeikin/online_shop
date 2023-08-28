@@ -170,6 +170,64 @@
 
                 </div>
             {% endfor %}
+
+            <div class="raw">
+                <canvas id="myChart"></canvas>
+            </div>
+            {% block script %}
+                {% if product.status != 'None' %}
+                    <script>
+                        const ctx = document.getElementById('myChart');
+
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for i in change %}{% if variants.id == i.variant_id %}'{{ i.update|date }}'{% endif %}, {% endfor %}],
+                                datasets: [{
+                                    label: '# of Votes',
+                                    data: [{% for i in change %}{% if variants.id == i.variant_id %}{{ i.unit_price }}{% endif %}, {% endfor %}],
+                                    borderWidth: 0.1,
+                                    backgroundColor: '#f33232',
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+
+                {% else %}
+                    <script>
+                        const ctx = document.getElementById('myChart');
+
+                        new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: [{% for i in update %}'{{ i.update|date }}',{% endfor %}],
+                                datasets: [{
+                                    label: '# of Votes',
+                                    data: [{% for i in update %}{{ i.unit_price }}, {% endfor %}],
+                                    borderWidth: 0.1,
+                                    backgroundColor: '#f33232',
+                                }]
+                            },
+                            options: {
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                }
+                            }
+                        });
+                    </script>
+
+                {% endif %}
+            {% endblock %}
+
         </div>
     </div>
 {% endblock %}

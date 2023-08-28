@@ -4,6 +4,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 from django.contrib.auth.models import User
 from django.db.models import Avg
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 # Create your models here.
@@ -44,11 +46,13 @@ class Product(models.Model):
     name = models.CharField(max_length=255)
     amount = models.PositiveIntegerField()
     unit_price = models.PositiveIntegerField()
+    change = models.BooleanField(default=True)
     discount = models.PositiveIntegerField(null=True, blank=True)
     total_price = models.PositiveIntegerField()
     description = RichTextUploadingField(null=True, blank=True)
     category = models.ManyToManyField(Category, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    update = models.DateTimeField(auto_now=True)
     is_available = models.BooleanField(default=True)
     tags = TaggableManager(blank=True)
     status = models.CharField(max_length=255, null=True, blank=True, choices=VARIANT)
@@ -117,6 +121,7 @@ class ProductColor(models.Model):
 
 class Variants(models.Model):
     name = models.CharField(max_length=255)
+    update = models.DateTimeField(auto_now=True)
     product_variant = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variant')
     size_variant = models.ForeignKey(ProductSize, on_delete=models.CASCADE, blank=True, null=True)
     color_variant = models.ForeignKey(ProductColor, on_delete=models.CASCADE, null=True, blank=True)
@@ -155,3 +160,31 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.user.username}({self.product})"
+
+
+class Chart(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    unit_price = models.PositiveIntegerField(default=0)
+    update = models.DateTimeField(auto_now=True)
+    color = models.CharField(max_length=50, blank=True)
+    size = models.CharField(max_length=50, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='pr_update', blank=True, null=True)
+    variant = models.ForeignKey(Variants, on_delete=models.CASCADE, related_name='vr_update', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+@receiver(post_save, sender=Product)
+def create_user_profile(sender, instance, created, *args, **kwargs):
+    data = instance
+    if data.change == False:
+        Chart.objects.create(product=data, unit_price=data.unit_price, update=data.update, name=data.name)
+
+
+@receiver(post_save, sender=Variants)
+def variant_user_profile(sender, instance, created, *args, **kwargs):
+    data = instance
+
+    Chart.objects.create(variant=data, size=data.size_variant, color=data.color_variant, unit_price=data.unit_price,
+                         update=data.update, name=data.name)
