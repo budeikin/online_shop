@@ -35,6 +35,21 @@
 
                 <hr>
                 <h1>all Products</h1>
+                <form action="">
+                    <input type="submit" name="price" value="cheapest">
+                    <input type="submit" name="price" value="expensive">
+                    <input type="submit" name="created_at" value="oldest">
+                    <input type="submit" name="created_at" value="newest">
+                    <input type="submit" name="discount" value="higher">
+                    <input type="submit" name="discount" value="lower">
+
+                    <div style="display: None">
+                        {{ filter.form.brand }}
+                        {{ filter.form.size }}
+                        {{ filter.form.color }}
+                    </div>
+                </form>
+
                 {% for product in products %}
 
                     <div class="d-flex flex-column justify-content-center align-items-center">
@@ -57,10 +72,10 @@
                     <ul class="pagination">
                         {% if products.has_previous %}
                             <li class="page-item"><a class="page-link"
-                                                     href="?page={{ products.previous_page_number }}">Previous</a>
+                                                     href="?page={{ products.previous_page_number }}&{{ data }}">Previous</a>
                             </li>
                             <li class="page-item"><a class="page-link"
-                                                     href="?page={{ products.previous_page_number }}">{{ products.previous_page_number }}</a>
+                                                     href="?page={{ products.previous_page_number }}&{{ data }}">{{ products.previous_page_number }}</a>
                             </li>
                         {% endif %}
 
@@ -71,10 +86,10 @@
 
                         {% if products.has_next %}
                             <li class="page-item"><a class="page-link"
-                                                     href="?page={{ products.next_page_number }}">{{ products.next_page_number }}</a>
+                                                     href="?page={{ products.next_page_number }}&{{ data }}">{{ products.next_page_number }}</a>
                             </li>
                             <li class="page-item"><a class="page-link"
-                                                     href="?page={{ products.next_page_number }}">Next</a>
+                                                     href="?page={{ products.next_page_number }}&{{ data }}">Next</a>
                             </li>
                         {% endif %}
 
@@ -111,6 +126,16 @@
                     <lable>by size
                         {{ filter.form.size }}
                     </lable>
+                    <div style="display: None">
+                        {{ filter.form.price }}
+                        {{ filter.form.cheapest }}
+                        {{ filter.form.expensive }}
+                        {{ filter.form.oldest }}
+                        {{ filter.form.newest }}
+                        {{ filter.form.higher }}
+                        {{ filter.form.lower }}
+                    </div>
+
                     <button type="submit" class="btn btn-danger">filter</button>
                 </form>
             </div>

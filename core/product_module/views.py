@@ -9,6 +9,7 @@ from cart.forms import CartForm
 from django.core.paginator import Paginator
 from .filters import ProductFileter
 from django.db.models import Min, Max
+from urllib.parse import urlencode
 
 
 # Create your views here.
@@ -21,7 +22,9 @@ def all_products(request, slug=None):
     min = int(min_price['unit_price'])
     max_price = Product.objects.aggregate(unit_price=Max('unit_price'))
     max = int(max_price['unit_price'])
-
+    data = request.GET.copy()
+    if 'page' in data:
+        del data['page']
     paginator = Paginator(products, 2)
     page_num = request.GET.get('page')
     page_object = paginator.get_page(page_num)
@@ -35,7 +38,7 @@ def all_products(request, slug=None):
 
     return render(request, 'product_module/products.html',
                   context={'products': page_object, 'categories': categories, 'page_num': page_num, 'filter': f,
-                           'min': min, 'max': max})
+                           'min': min, 'max': max, 'data': urlencode(data)})
 
 
 def detail_product(request, id):

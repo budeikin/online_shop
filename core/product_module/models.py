@@ -61,6 +61,8 @@ class Product(models.Model):
     size = models.ManyToManyField('ProductSize', blank=True)
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, blank=True, null=True)
     favorite = models.ManyToManyField(User, blank=True, null=True, related_name='favorite_products')
+    total_favorite = models.IntegerField(default=0)
+    sell = models.IntegerField(default=0)
 
     def average(self):
         data = Comment.objects.filter(product=self, is_reply=False).aggregate(avg=Avg('rate'))
