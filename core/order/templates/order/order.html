@@ -9,6 +9,7 @@
         <h2>order detail</h2>
         <h2>{{ order.user.get_full_name }}</h2>
         <h3>total price is {{ order.get_price }}$</h3>
+        <h3>Tracking Code : {{ order.code }}$</h3>
         <div>
             <form action="{% url 'order:order-coupon' order.id %}" method="post">
                 {% csrf_token %}

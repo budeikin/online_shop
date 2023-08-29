@@ -14,6 +14,7 @@ class Order(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     address = models.CharField(max_length=50)
+    code = models.CharField(max_length=255, null=True)
 
     def get_price(self):
         total = sum(i.price() for i in self.items.all())

@@ -31,7 +31,10 @@
                             <td>{{ item.product.name }}</td>
                             <td>{{ item.variant.size_variant }}</td>
                             <td>{{ item.variant.color_variant }}</td>
-                            <td>{{ item.quantity }}</td>
+                            <td><a href="{% url 'cart:add-single' item.id %}"
+                                   class="fa fa-plus text-white"></a> {{ item.quantity }}
+                                <a href="{% url 'cart:remove-single' item.id %}"
+                                   class="fa fa-minus text-white"></a></td>
                             <td>
                                 {% if item.product.status != 'None' %}
                                     {{ item.variant.total_price }}

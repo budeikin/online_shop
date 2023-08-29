@@ -5,6 +5,7 @@ from cart.models import Cart
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.contrib import messages
+from django.utils.crypto import get_random_string
 
 
 # Create your views here.
@@ -19,9 +20,11 @@ def order_create(request):
         order_form = OrderForm(request.POST)
         if order_form.is_valid():
             data = order_form.cleaned_data
+            code = get_random_string(length=8)
             order = Order.objects.create(user_id=request.user.id, email=data['email'],
                                          first_name=data['first_name'],
-                                         last_name=data['last_name'])
+                                         last_name=data['last_name'],
+                                         code=code)
             cart = Cart.objects.filter(user_id=request.user.id)
             for item in cart:
                 OrderItem.objects.create(order_id=order.id, user_id=request.user.id, product_id=item.product_id,

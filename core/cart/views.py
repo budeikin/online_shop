@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from product_module.models import Product, Variants
 from .models import Cart
 from .forms import CartForm
@@ -65,4 +65,30 @@ def delete_from_cart(request, id):
     url = request.META.get('HTTP_REFERER')
     product = Cart.objects.filter(product_id=id)
     product.delete()
+    return redirect(url)
+
+
+def add_single(request, id):
+    url = request.META.get('HTTP_REFERER')
+    cart = Cart.objects.get(id=id)
+    if cart.product.status == 'None':
+        product = Product.objects.get(id=cart.product.id)
+        if product.amount > cart.quantity:
+            cart.quantity += 1
+    else:
+        variant = Variants.objects.get(id=cart.variant.id)
+        if variant.amount > cart.quantity:
+            cart.quantity += 1
+    cart.save()
+    return redirect(url)
+
+
+def remove_single(request, id):
+    url = request.META.get('HTTP_REFERER')
+    cart = Cart.objects.get(id=id)
+    if cart.quantity < 2:
+        cart.delete()
+    else:
+        cart.quantity -= 1
+        cart.save()
     return redirect(url)
