@@ -32,7 +32,12 @@
         {% endif %}
         <h4>{{ product.total_price }} $</h4>
         <hr>
-
+        <form action="{% url 'cart:product-compare' product.id %}">
+            {% csrf_token %}
+            <input type="hidden" name='product' value="{{ product.id }}">
+            <button type="submit" class="btn btn-danger">Compare</button>
+        </form>
+        <hr>
         <div class="cart">
             {% if product.status != 'None' %}
                 <form action="{% url 'cart:add-to-cart' id=product.id %}" method="post">

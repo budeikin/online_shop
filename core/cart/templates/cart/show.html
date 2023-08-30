@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    compare
+{% endblock %}
+
+{% block content %}
+
+    <div class="container d-flex flex-column">
+
+        <div class="col-6 d-flex flex-column">
+            {% for i in data %}
+                <h3>{{ i.product.name }}</h3>
+                <img src="{{ i.product.image.url }}" alt="" style="width: 200px">
+            {% endfor %}
+
+        </div>
+
+    </div>
+{% endblock %}

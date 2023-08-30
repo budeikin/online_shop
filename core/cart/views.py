@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from product_module.models import Product, Variants
-from .models import Cart
-from .forms import CartForm
+from .models import Cart, Compair
+from .forms import CartForm, CompairForm
 from django.contrib.auth.decorators import login_required
 from order.forms import OrderForm
+from django.contrib import messages
 
 
 # Create your views here.
@@ -92,3 +93,33 @@ def remove_single(request, id):
         cart.quantity -= 1
         cart.save()
     return redirect(url)
+
+
+def compare(request, id):
+    url = request.META.get('HTTP_REFERER')
+    if request.user.is_authenticated:
+        item = get_object_or_404(Product, id=id)
+        qs = Compair.objects.filter(user_id=request.user.id, product_id=id)
+        if qs.exists():
+            messages.success(request, 'ook')
+        else:
+            Compair.objects.create(user_id=request.user.id, product_id=item.id, session_key=None)
+    else:
+        item = get_object_or_404(Product, id=id)
+        qs = Compair.objects.filter(user_id=None, product_id=id, session_key=request.session.session_key)
+        if qs.exists():
+            messages.success(request, 'ok session')
+        else:
+            if not request.session.session_key:
+                request.session.create()
+            Compair.objects.create(user_id=None, product_id=item.id, session_key=request.session.session_key)
+    return redirect(url)
+
+
+def show(request):
+    if request.user.is_authenticated:
+        data = Compair.objects.filter(user_id=request.user.id)
+        return render(request, 'cart/show.html', {'data': data})
+    else:
+        data = Compair.objects.filter(session_key__exact=request.session.session_key, user_id=None)
+        return render(request, 'cart/show.html', {'data': data})
